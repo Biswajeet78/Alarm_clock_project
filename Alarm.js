@@ -1,121 +1,123 @@
-const display=document.getElementById("clock");
-//setting audio for alarm from link.
-const audio=new Audio('image/sia.mp3');
-audio.loop=true;
 
-let alarmTime=null;
-let alarmTimeout=null;
+// variables
 
-const myList = document.querySelector('#myList');
-const addAlarm = document.querySelector('.setAlarm');
-//to store all the alarms belong set in array;
-const alarmList=[];
-//starting count as 1;
-//in order to play alarm audio at correct time;
-function ringing(now){
-    audio,play();
-    window.alert(`Hey! it is  $(now)`);
+let alarmListArr = [];
+const selectMenu = document.querySelectorAll("select");
+const setAlarmBtn = document.querySelector("#btn-setAlarm");
+let alarmCount = 0;
+let alarmTime;
+let ring = new Audio("audio/Alarm-ringtone.mp3");
 
-}
-// updating time every second;
-function updateTime(){
-    var Today = new Date();
-    var hour = formatTime(Today.getHours());
-    var minutes=formatTime(Today.getMinutes());
-    var seconds=formatTime(Today.getSeconds());
-    var zone = hour>=12?"PM":"AM";
-    if(hour>12){
-        hour=hour%12;
-        hour="0"+hour;
-    }
-    var now=`${hour}:${minutes}:${seconds}${zone}`;
-    display.innerText=`${hour}:${minutes}:${seconds} ${zone}`;
-    //we check do alarmList array contain time current time now;
-    //if yes, we call function to ring
-    if(alarmList.includes(now)){
-        ringing(now);
-    }
 
-}
-//setting correct format of time by converting 1:2:3 as 01:02:03
-function formatTime(time){
-    if(time<10 && time.length !=2){
-        return "0"+time;
-    }
-    return time;
-}
-//function to clear/stop the currently playing alarm.
-function clearAlarm(){
-    audio.pause();
-    if(alarmTimeout){
-        clearTimeout(alarmTimeout);
-        alert('Alarm cleared');
-    }
+// Script for Time and Date
 
-}
-//to remove an alarm from list and webpage when "Delete Alarm" event is placed;
-myList.addEventListener('click',e=>{
-    console.log("removing element");
-    if(e.target.classList.contains("deleteAlarm")){
-        e.target.parentElement.remove();
-    }
 
-})
-//removes an alarm from the array when "Delete Alarm" is clicked
-remove=(value)=>{
-    let newList=alarmList.filter((time)=>time!=value);
-    alarmList.length=0;
-    alarmList.push.apply(alarmList,newList);
+function updateClock(){
+    var now = new Date();
+    var dname = now.getDay(),
+        mo = now.getMonth(),
+        dnum = now.getDate(),
+        yr = now.getFullYear(),
+        hou = now.getHours(),
+        min = now.getMinutes(),
+        sec = now.getSeconds(),
+        pe = "AM";
 
-    console.log("newList",newList);
-    console.log("alarmList",alarmList);
-
-}
-//Adds newAlarm to the unordered list as a newlist item on webpage
-function showNewAlarm(newAlarm){
-    const html=`
-    <li class="time-list">
-           <span class ="time"> ${newAlarm}</span>
-           <button class="deleteAlarm time-control" id="delete-button" onclick="remove(this.value)" value=${newAlarm}>Delete Alarm</button>
-    </li>`
-    myList.innerHTML+=html
-
-};
-//event to set a new alarm whenever the form is submitted
-addAlarm.addEventListener('submit',e=>{
-    e.preventDefault();
-    //const new Alarm = addAlarm.alarmTime.value;
-    let new_h=formatTime(addAlarm.a_hour.value);
-    if(new_h==='0'){
-        new_h='00'
-    }
-    let new_m=formatTime(addAlarm.a_minute.value);
-    if(new_m==='0'){
-        new_m='00'
-    }
-    let new_s=formatTime(addAlarm.a_second.value);
-    if(new_s==='0'){
-        new_s='00'
-    }
-    let new_z=addAlarm.zone.value;
-
-    const newAlarm=`${new_h}:${new_m}:${new_s} ${new_z}`;
-    //add newAlarm to alarmList
-    if(isNaN(newAlarm)){
-        if(!alarmList.includes(newAlarm)){
-            alarmList.push(newAlarm);
-            console.log(alarmList);
-            console.log(alarmList.length);
-            showNewAlarm(newAlarm);
-            addAlarm.reset();
-        }else{
-            alert(`Alarm for ${newAlarm} already set.`);
-
+        if(hou==0){
+            hou = 12;
         }
+
+        if(hou>12){
+            hou -=12;
+            pe = "PM";
+        }
+
+        Number.prototype.pad = function(digits){
+            for(var n = this.toString(); n.length<digits; n=0+n);
+            return n;
+        }
+
+        var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        var week = ["Sunday", "Monday", "Tusday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        var ids =["dayName", "month", "dayNum", "year", "hour", "minutes", "seconds", "period"];
+        var values = [week[dname], months[mo], dnum.pad(2),yr,hou.pad(2),min.pad(2),sec.pad(2),pe];
+        
+        for(var i=0; i<ids.length;i++){
+            document.getElementById(ids[i]).firstChild.nodeValue = values[i];
+        }
+
+        for(let i=0; i<alarmListArr.length;i++){
+            if(alarmListArr[i]==`${hou.pad(2)}:${min.pad(2)}:${sec.pad(2)} ${pe}`){
+                console.log("Alarm ringing...");
+                ring.load();
+                ring.play();
+                document.querySelector("#stopAlarm").style.visibility= "visible";
+            }
+        }
+}
+
+function initClock() {
+    updateClock();
+    window.setInterval("updateClock()",1000);
+}
+
+
+//Set Alarm section
+
+
+for(let i=12; i>0;i--){
+    i=i<10 ? "0"+i :i;
+    let option = `<option value="${i}">${i}</option>`;
+    selectMenu[0].firstElementChild.insertAdjacentHTML("afterend", option);
+}
+
+for(let i=59; i>=0;i--){
+    i=i<10 ? "0"+i :i;
+    let option = `<option value="${i}">${i}</option>`;
+    selectMenu[1].firstElementChild.insertAdjacentHTML("afterend", option);
+}
+
+for(let i=2; i>0;i--){
+    let ampm = i== 1? "AM":"PM";
+    let option = `<option value="${ampm}">${ampm}</option>`;
+    selectMenu[2].firstElementChild.insertAdjacentHTML("afterend", option);
+}
+
+//add alarm 
+
+
+function setAlarm(){
+    document.querySelector("#alarm-h3").innerText = "Alarms";
+    let time = `${selectMenu[0].value}:${selectMenu[1].value}:00 ${selectMenu[2].value}`;
+    if(time.includes("setHour") || time.includes("setMinute") || time.includes("AM/PM")){
+        alert("Please, Select Valide Input");
     }else{
-            alert("Invalid Time Entered")
+        alarmCount++;
+        document.querySelector(".alarmList").innerHTML += `
+        <div class="alarmLog" id="alarm${alarmCount}">
+            <span id="span${alarmCount}">${time}</span>
+            <button class="btn-delete" id="${alarmCount}" onClick="deleteAlarm(this.id)">Delete</button>
+        </div>`;
+
+        alarmTime = `${selectMenu[0].value}:${selectMenu[1].value}:00 ${selectMenu[2].value}`;
+        alarmListArr.push(alarmTime);
+        console.log(document.querySelector(".btn-delete").value);
     }
 
-})
-//calls updateTime() every second
-setInterval(updateTime,1000);
+}
+
+setAlarmBtn.addEventListener("click",setAlarm);
+
+//delete alarm
+
+function deleteAlarm(click_id){
+    var element = document.getElementById("alarm"+click_id);
+    var deleteIndex = alarmListArr.indexOf(document.querySelector("#span"+click_id).innerText);
+    alarmListArr.splice(deleteIndex,1);
+    element.remove();
+}
+
+function stopAlarm(){
+    ring.pause();
+    document.querySelector("#stopAlarm").style.visibility= "hidden";
+}
