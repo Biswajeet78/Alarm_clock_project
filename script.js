@@ -121,3 +121,4 @@ function stopAlarm(){
     ring.pause();
     document.querySelector("#stopAlarm").style.visibility= "hidden";
 }
+
