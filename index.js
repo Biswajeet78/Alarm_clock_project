@@ -5,9 +5,9 @@ var currentId = 1;
 //Extracting and updating the current time after each second
 function updateTime(){
     var now = new Date();
-    var hours = new.getHours();
-    var minutes = new.getMinutes();
-    var seconds = new.getSeconds();
+    var hours = now.getHours();
+    var minutes = now.getMinutes();
+    var seconds = now.getSeconds();
 
     if(hours < 10){
         hours = "0" + hours;
@@ -78,7 +78,7 @@ btn1.addEventListener('click', () =>{
         alarmsList.innerHTML += `
              <div id = "alarm-entry">
                   <span class = "alarm-display"> ${newAlarm} </span>
-                  <button id = "delete-btn"> Delete Alarm </button>
+                  <button id = "delete-btn"> <img class="delete-icon" src="484611.png" alt="delete-button"> </button>
             </div>
             
         `
