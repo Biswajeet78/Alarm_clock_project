@@ -57,22 +57,29 @@ input::-webkit-inner-spin-button{
 }
 
 #alarm-list{
+  min-height: 100px;
+  width: 600px;
   text-align: center;
   background-color: blue;
   width: 30%;
   padding: 10px;
   margin-left: 30%;
   border: solid 2px white;
+  display: flex;
+  flex-direction: column;
 }
 
 #alarm-entry{
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .alarm-display{
+  height: 20px;
   padding: 5px;
   background-color: white;
-  margin: 50px;
   border: solid 2px blue;
 }
 
@@ -85,9 +92,15 @@ input::-webkit-inner-spin-button{
   border: none;
   margin: 0px 5px;
   letter-spacing: 0.6px;
+  width: 60%;
 }
 
 #delete-btn:hover{
-  background-color: crimson;
+  background-color: lime;
   color: white;
+}
+
+.delete-icon{
+  width: 30px;
+  height: 30px;
 }
